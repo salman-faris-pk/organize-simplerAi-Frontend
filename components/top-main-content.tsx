@@ -1,3 +1,4 @@
+"use client";
 import { useStepStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
@@ -6,38 +7,34 @@ import Link from "next/link";
 import { Icons } from "./icons";
 import { buttonVariants } from "./ui/button";
 
-
-
-
 export function TopMainContent({
-    title,
-    displayUploadButton = false,
-    step= undefined,
+  title,
+  displayUploadButton = false,
+  step = undefined,
 }: {
-    title:string;
-    displayUploadButton?: boolean;
-    step?: number
+  title: string;
+  displayUploadButton?: boolean;
+  step?: number;
 }) {
-
-    useEffect(()=> {
-        useStepStore.setState(() => ({
-            current: step ?? 0,
-            status: "active"
-        }))
-    },[step])
+  useEffect(() => {
+    useStepStore.setState(() => ({
+      current: step ?? 0,
+      status: "active",
+    }));
+  }, [step]);
 
   return (
-    <div className="h-32 relative flex-none border-slate-200 border-b-2 flex items-end justify-center">
-         <h1
+    <div className="h-32 relative md:ml-10 flex-none flex items-end justify-center">
+      <h1
         className={cn(
-          step !== undefined ? "lg:text-3xl" : "lg:text-4xl",
-          "hidden lg:block mb-6 ml-10 absolute left-0 bottom-0"
+          step !== undefined ? "text-4xl lg:text-3xl" : "text-4xl lg:text-4xl",
+          "mb-6 ml-10 absolute left-0 bottom-0"
         )}
       >
         {title}
       </h1>
       {step !== undefined && <MultiStep />}
-       {displayUploadButton && (
+      {displayUploadButton && (
         <Link
           className={cn(
             buttonVariants(),
@@ -53,7 +50,6 @@ export function TopMainContent({
           Upload Files
         </Link>
       )}
-
     </div>
-  )
+  );
 }
