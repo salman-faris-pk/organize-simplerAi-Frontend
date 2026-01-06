@@ -8,7 +8,7 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const title = "Organize Simple";
+const title = "EXTR∆CT∆ - platform for extract pdf..";
 const description =
   "Organize Simple is a web application that helps you to extract organzied data from unorganized text.";
 

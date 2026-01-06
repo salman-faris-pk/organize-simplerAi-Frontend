@@ -4,7 +4,7 @@ import { Metadata } from "next"
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: 'login - organize-simple-platform',
+  title: 'login - Ectraction-platform',
   description: "Login to your account"
 };
 

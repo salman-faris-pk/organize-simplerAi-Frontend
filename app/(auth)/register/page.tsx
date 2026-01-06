@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "register - organize-simple-platform",
+  title: "register - Extraction-platform",
   description: "Create a new account",
 };
 
