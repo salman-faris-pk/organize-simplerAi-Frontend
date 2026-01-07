@@ -43,7 +43,7 @@ export default function HelpPage (){
 
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <section className="mb-8 sm:mb-12">
-          <div className="rounded-xl sm:border border-amber-200/50 bg-linear-to-r from-amber-50/70 to-orange-50/70 backdrop-blur-sm p-5 sm:p-8 mb-6 sm:mb-8 ">
+          <div className="rounded-xl border border-amber-200 bg-transparent backdrop-blur-sm p-5 sm:p-8 mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
               {/* Icon */}
               <div className="shrink-0 hidden sm:block">

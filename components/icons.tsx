@@ -18,7 +18,10 @@ import {
   PlusCircle,
   ChevronsUpDown,
   Inbox,
-  LucideIcon
+  ChevronLeft,
+  ChevronRight,
+  LucideIcon,
+  Menu
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -43,6 +46,9 @@ export const Icons = {
   chevronsUpDown: ChevronsUpDown,
   close: XCircle,
   upload: UploadCloud,
+  chevronleft: ChevronLeft,
+  chevronright: ChevronRight,
+  menu: Menu,
   settings: ({ ...props }: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

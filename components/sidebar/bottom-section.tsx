@@ -1,18 +1,11 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Icons } from "../icons";
 import { NavItem } from "./nav-section";
-
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export function BottomSection({
   className,
@@ -24,137 +17,60 @@ export function BottomSection({
   items: NavItem[];
 }) {
   const path = usePathname();
-  const [open, setOpen] = useState<string | null>(null);
- 
   return (
-    <div className={cn("flex flex-col gap-4 ml-4 sm:ml-0", className)}>
-      <ul role="list" className="flex flex-col gap-2">
-        {items.map((item) => {
-          const Icon = Icons[item.icon];
-          const isActive = path === item.href;
-          return (
-            <li key={item.href}>  
-              <div className="sm:hidden py-2">
-                <Tooltip open={open === item.href}>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setOpen(open === item.href ? null : item.href)
-                      }
-                    >
-                      <Icon
-                        width={19}
-                        height={19}
-                        strokeWidth={2.5}
-                        className="stroke-slate-800"
-                      />
-                    </button>
-                  </TooltipTrigger>
-
-                  <TooltipContent
-                    side="right"
-                    align="center"
-                    className="bg-transparent text-amber-950 border border-amber-100 px-3 py-1.5 text-sm shadow-lg backdrop-blur">
-                    <Link
-                      href={item.href}
-                      className="font-medium"
-                      onClick={() => setOpen(null)}
-                    >
-                      {item.label}
-                    </Link>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-
-              {/* LARGE SCREEN */}
+    <div className={className}>
+      <div className="flex mb-4 md:mb-0">
+        <ul role="list" className="mt-1">
+          {items.map((item, index) => {
+            const Icon = Icons[item.icon];
+            return (
               <Link
+                className="flex items-center ml-1 my-4 md:my-3"
+                key={index}
                 href={item.href}
-                className={cn(
-                  "hidden sm:flex items-center gap-3 rounded-md py-3 sm:px-0 text-slate-800 hover:bg-amber-100/30 transition",
-                  isActive && "bg-amber-100/30 font-semibold"
-                )}
               >
                 <Icon
                   width={20}
                   height={20}
                   strokeWidth={2.5}
-                  className="stroke-slate-800"
+                  className="inline-block stroke-slate-900"
                 />
-                <span>{item.label}</span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-
-      <div className="flex items-center gap-3 sm:border border-slate-200 sm:px-3 py-2 rounded-md">
-        <div className="sm:hidden">
-          <Tooltip open={open === "user"}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => setOpen(open === "user" ? null : "user")}
-                className="h-7 w-7 sm:h-10 sm:w-10 rounded-full bg-slate-900 flex items-center justify-center"
-              >
-                <span className="text-slate-100 font-bold">
-                  {username.slice(0, 2).toUpperCase()}
-                </span>
-              </button>
-            </TooltipTrigger>
-
-            <TooltipContent
-              side="right"
-              align="center"
-              className="
-                bg-slate-100
-                text-amber-950
-                border border-amber-100
-                px-3 py-3
-                text-sm
-                shadow-lg
-                backdrop-blur
-              "
-            >
-
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold">
-                {username.length > 7 ? `${username.slice(0, 7)}…` : username}
-                </span>
-
-                <button
-                  onClick={() =>
-                    signOut({ callbackUrl: "/login" })
-                  }
-                  className="text-left text-sm text-red-600 hover:underline"
+                <span
+                  className={cn(
+                    path === item.href ? "font-bold text-amber-800" : "font-medium text-slate-800",
+                    "ml-2"
+                  )}
                 >
-                  Logout
-                </button>
-              </div>
-            </TooltipContent>
-          </Tooltip>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </ul>
+      </div>
+      <div
+        className={cn(
+          className,
+          "flex items-center border rounded-md border-slate-200 py-3 px-2.5 -ml-2"
+        )}
+      >
+        <div className="rounded-full bg-slate-900 h-10 w-10 flex flex-none items-center justify-center">
+          <span className="text-slate-100 font-bold">
+            {`${username.slice(0, 1).toUpperCase()}${username.slice(1, 2)}`}
+          </span>
         </div>
-
-        {/* LARGE SCREEN USER INFO */}
-        <div className="hidden sm:flex items-center gap-3 w-full">
-          <div className="h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center">
-            <span className="text-slate-100 font-bold">
-              {username.slice(0, 2).toUpperCase()}
-            </span>
-          </div>
-
-          <span className="text-slate-800 truncate">
-            {username.length > 11 ? `${username.slice(0, 11)}…` : username}
-            </span>
-
-          <button
-            onClick={() =>
-              signOut({ callbackUrl: "/login" })
-            }
-            className="ml-auto rounded p-2 hover:bg-slate-100 transition"
-          >
-            <Icons.logout className="h-5 w-5 text-slate-800" />
-          </button>
+        <span className="ml-2 text-slate-800 text-ellipsis overflow-hidden">
+          {username.length > 11 ? username.slice(0, 11) : username}
+        </span>
+        <div
+          onClick={() => {
+            signOut({
+              callbackUrl: "/login",
+            });
+          }}
+          className="ml-auto p-2 hover:cursor-pointer hover:bg-slate-100 hover:rounded"
+        >
+          <Icons.logout className="h-5 w-5 text-slate-800 hover:text-slate-600" />
         </div>
       </div>
     </div>
