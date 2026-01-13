@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${inter.variable} antialiased bg-amber-50/20 `}
       >
         {children}
-        <Toaster position="top-center"/>
+        <Toaster position="top-right"/>
       </body>
     </html>
   );

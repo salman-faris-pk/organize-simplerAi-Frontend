@@ -1,9 +1,8 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { compare } from "bcrypt";
-
 
 declare module "next-auth" {
   interface Session {
@@ -27,7 +26,6 @@ declare module "next-auth/jwt" {
     email: string;
   }
 }
-
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -65,7 +63,8 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          username: user.username ?? user.email.split("@")[0].replace(/[0-9]/g, ""),
+          username:
+            user.username ?? user.email.split("@")[0].replace(/[0-9]/g, ""),
         };
       },
     }),
@@ -83,27 +82,25 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (session.user) {
-      session.user.id = token.sub!;
-      session.user.email = token.email!;
-      session.user.username = token.username!;
+        session.user.id = token.sub!;
+        session.user.email = token.email!;
+        session.user.username = token.username!;
       }
       return session;
     },
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        const exists = await prisma.user.findUnique({
+        const User = await prisma.user.upsert({
           where: { email: user.email! },
+          update: {},
+          create: {
+            email: user.email!,
+            username: user.email!.split("@")[0].replace(/[0-9]/g, ""),
+            provider: "google",
+          },
         });
 
-        if (!exists) {
-          await prisma.user.create({
-            data: {
-              email: user.email!,
-              username: user.email!.split("@")[0].replace(/[0-9]/g, ""),
-              provider: "google"
-            },
-          });
-        }
+        user.id = User.id;
       }
       return true;
     },
@@ -114,4 +111,3 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-
