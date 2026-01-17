@@ -1,15 +1,15 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { randomUUID } from "crypto";
-import { s3 } from '../lib/s3'
+import { s3 } from '@/app/api/lib/s3'
 import { prisma } from "@/lib/db";
+import { getUser } from "@/app/api/lib/user";
+
 
 
 export async function POST(req: Request){
 
-    const session= await getServerSession(authOptions);
+    const session= await getUser();
  
     if(!session){
         return NextResponse.json({error: 'Unauthorized'}, {status: 401})
@@ -37,7 +37,7 @@ export async function POST(req: Request){
       const buffer= Buffer.from(await file.arrayBuffer());
 
      
-      const userUUID = session?.user.id;
+      const userUUID = session?.id;
       const fileUUID = randomUUID();
       const key = `${userUUID}/${fileUUID}`;
 
