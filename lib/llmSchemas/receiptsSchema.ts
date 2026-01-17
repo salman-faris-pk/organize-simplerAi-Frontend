@@ -90,3 +90,84 @@ export const receiptsSchema = {
     "total",
   ],
 };
+
+
+// export const receiptsSchema = {
+//   $schema: "https://json-schema.org/draft-07/schema#",
+//   title: "Receipt",
+//   type: "object",
+//   additionalProperties: false,
+
+//   properties: {
+//     number: {
+//       type: "string",
+//       description: "Receipt number if present.",
+//     },
+
+//     category: {
+//       type: "string",
+//       description:
+//         "Category of the receipt such as retail, groceries, restaurant, cafe, or other.",
+//     },
+
+//     date: {
+//       type: "string",
+//       description: "Date of the receipt as shown on the document.",
+//     },
+
+//     time: {
+//       type: "string",
+//       description: "Time of the receipt if available.",
+//     },
+
+//     from: {
+//       type: "string",
+//       description: "Merchant or issuer of the receipt.",
+//     },
+
+//     items: {
+//       type: "array",
+//       description: "Line items listed on the receipt.",
+//       items: {
+//         type: "object",
+//         additionalProperties: false,
+//         properties: {
+//           description: {
+//             type: "string",
+//             description: "Description of the item.",
+//           },
+//           quantity: {
+//             type: "number",
+//             description: "Quantity if available.",
+//           },
+//           amount: {
+//             type: "number",
+//             description: "Total amount for the item.",
+//           },
+//         },
+//       },
+//     },
+
+//     subtotal: {
+//       type: "number",
+//       description: "Subtotal amount if present.",
+//     },
+
+//     tax: {
+//       type: "number",
+//       description: "Tax amount if present.",
+//     },
+
+//     tip: {
+//       type: "number",
+//       description: "Tip or gratuity if present.",
+//     },
+
+//     total: {
+//       type: "number",
+//       description: "Final total amount paid.",
+//     },
+//   },
+
+//   required: ["from", "total"],
+// };
