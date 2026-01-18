@@ -34,6 +34,7 @@ model Extraction {
   filename  String
   objectPath String
   text  String?
+  category String?
   json  Json?
   status Status @default(TO_RECOGNIZE)
   receipt Receipt?

@@ -23,6 +23,7 @@ export async function POST(req:Request) {
       { status: 400 }
     )
     };
+    
     let schema;
 
     switch(category){
