@@ -28,7 +28,7 @@ export function RegisterForm({ className, ...props }: React.HTMLAttributes<HTMLD
   const router = useRouter();
 
     const onSubmit = async (data: RegisterFormData) => {
-  setLoading(true);
+    setLoading(true);
 
   try {
     const res = await fetch("/api/auth/register", {
@@ -44,13 +44,13 @@ export function RegisterForm({ className, ...props }: React.HTMLAttributes<HTMLD
       return;
     }
 
-    toast.success("Registered successfully! Logging you in...");
-
     const loginResult = await signIn("credentials", {
       identifier: data.username, // or data.email
       password: data.password,
       redirect: false,
     });
+    
+    toast.success("Registered successfully! Logging you in...");
 
     if (loginResult?.ok) {
       router.refresh();

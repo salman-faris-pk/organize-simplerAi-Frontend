@@ -35,7 +35,7 @@ export function AuthForm({
     try {
       const [settledResult] = await Promise.allSettled([
         signIn("credentials", {
-          identifier: data.username.toLowerCase(),
+          identifier: data.username,
           password: data.password,
           redirect: false,
         }),

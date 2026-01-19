@@ -4,17 +4,17 @@ export const cardStatementsSchema = {
   title: "Credit Card Statement",
   type: "object",
   additionalProperties: false,
+
   properties: {
     issuer: {
       type: "object",
       description: "Issuer of the credit card statement.",
       additionalProperties: false,
       properties: {
-        name: { type: "string" ,description: "Name of the credit card issuer."},
-        address: { type: "string", description:
-            "Full address of the credit card issuer. If there is a newline, make the separation with a comma."},
+        name: { type: "string", description: "Name of the credit card issuer. REQUIRED." },
+        address: { type: "string", description: "Full address of the issuer. OPTIONAL." },
       },
-      required: ["name", "address"],
+      required: ["name"],
     },
 
     recipient: {
@@ -22,44 +22,43 @@ export const cardStatementsSchema = {
       description: "Recipient of the credit card statement.",
       additionalProperties: false,
       properties: {
-        name: { type: "string" ,description: "Name of the recipient."},
-        address: { type: "string",description:
-            "Full address of the recipient. If there is a newline, make the separation with a comma." },
+        name: { type: "string", description: "Name of the recipient. REQUIRED." },
+        address: { type: "string", description: "Full address of the recipient. OPTIONAL." },
       },
-      required: ["name", "address"],
+      required: ["name"],
     },
 
     date: {
       type: "string",
       format: "date",
-      description:"Date of the credit card statement. Must be in the format YYYY-MM-DD.",
+      description: "Date of the statement (YYYY-MM-DD). REQUIRED.",
     },
 
     credit_card: {
       type: "object",
-      description: "Credit card of the credit card statement",
+      description: "Credit card information for the statement.",
       additionalProperties: false,
       properties: {
-        name: { type: "string", description: "Name of the credit card." },
-        holder: { type: "string",description: "Name of the credit card holder." },
+        name: { type: "string", description: "Name of the credit card. OPTIONAL." },
+        holder: { type: "string", description: "Name of the credit card holder. OPTIONAL." },
         number: {
           type: "string",
           pattern: "^[X*]{4} [X*]{4} [X*]{4} \\d{4}$",
-          description: "Number of the credit card. Must be in the format XXXX XXXX XXXX XXXX."
+          description: "Masked credit card number (XXXX XXXX XXXX 1234). REQUIRED.",
         },
       },
-      required: ["name", "holder", "number"],
+      required: [ "number"],
     },
 
     transactions: {
       type: "array",
       minItems: 1,
+      description: "List of credit card transactions",
       items: {
         type: "object",
-        description: "List of transactions of the credit card statement.",
         additionalProperties: false,
         properties: {
-          description: { type: "string" ,description:"Name of the transaction, including the country code if applicable."},
+          description: { type: "string", description: "Transaction description. OPTIONAL" },
           category: {
             type: "string",
             enum: [
@@ -71,24 +70,40 @@ export const cardStatementsSchema = {
               "entertainment",
               "other",
             ],
-            description:'Category of the transaction. If the category is not listed, use "other".'
+            description: "Transaction category. REQUIRED. Use 'other' if unsure.",
           },
-          amount: { type: "number", minimum: 0 ,description: "Amount of the transaction."},
+          amount: { type: "number", minimum: 0, description: "Transaction amount. REQUIRED." },
+          date: { type: "string", format: "date", description: "Transaction date. OPTIONAL." },
+          merchant: { type: "string", description: "Merchant or store. OPTIONAL." },
         },
-        required: ["description", "category", "amount"],
+        required: [ "category", "amount"],
       },
     },
 
     currency: {
       type: "string",
       pattern: "^[A-Z]{3}$",
-      description:"Currency of the credit card statement. It must be a valid ISO 4217 currency code.",
+      description: "ISO 4217 currency code. REQUIRED.",
     },
 
     total_amount_due: {
       type: "number",
       minimum: 0,
-      description: "Total amount due of the credit card statement.",
+      description: "Total amount due. REQUIRED.",
+    },
+
+    extraction_confidence: {
+      type: "number",
+      minimum: 0,
+      maximum: 1,
+      description:
+        "Confidence score (0–1) representing how reliable the extraction is. OPTIONAL.",
+    },
+
+    extraction_notes: {
+      type: "string",
+      description:
+        "Notes about ambiguities, missing fields, or low-quality OCR areas. OPTIONAL.",
     },
   },
 

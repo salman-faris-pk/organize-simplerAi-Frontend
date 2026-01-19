@@ -1,52 +1,64 @@
-
 export const receiptsSchema = {
   $schema: "https://json-schema.org/draft-07/schema#",
-  title: "receipts schema",
+  title: "Receipt Extraction Schema",
   type: "object",
   additionalProperties: false,
   properties: {
-    number: {
+    from: {
       type: "string",
-      description: "Number of the receipt. Use empty string if not present.",
-    },
-
-    category: {
-      type: "string",
+      minLength: 1,
       description:
-        'Category of the receipt. If the category is not listed, ,use "other".',
-      enum: ["retail", "groceries", "restaurant", "cafe", "other"],
+        "Merchant or issuer name EXACTLY as written on the receipt.",
     },
 
     date: {
       type: "string",
       format: "date",
-      description: "Date of the receipt (YYYY-MM-DD)",
+      description:
+        "Receipt date in YYYY-MM-DD format. Use ONLY if explicitly present or clearly inferable.",
     },
 
-    time: {
+    category: {
       type: "string",
-      format: "time",
-      description: "Time of the receipt (HH:MM:SS). Use 00:00:00 if unknown.",
+      enum: ["retail", "groceries", "restaurant", "cafe", "other"],
+      description:
+        'Receipt category. Use "other" if no category clearly applies.',
     },
 
-    from: {
-      type: "string",
-      description: "Issuer of the receipt",
+    total: {
+      type: "number",
+      minimum: 0,
+      description:
+        "Final total amount paid. MUST be present and must match the receipt total.",
     },
 
     items: {
       type: "array",
       minItems: 1,
-      description: "List of items of the receipt",
+      description:
+        "Line items listed on the receipt. Must contain at least one item.",
       items: {
         type: "object",
-        description: "An item of the receipt",
         additionalProperties: false,
         properties: {
-          description: { type: "string",description:
-              "Description of the item. It should not contain the qunatity or the amount." },
-          quantity: { type: "number", minimum: 0,description: "Quantity of the item." },
-          amount: { type: "number", minimum: 0, description: "Amount of the item" },
+          description: {
+            type: "string",
+            minLength: 1,
+            description:
+              "Item description ONLY. Do NOT include quantity, price, or currency.",
+          },
+          quantity: {
+            type: "number",
+            minimum: 0,
+            description:
+              "Quantity of the item. Use 1 if not explicitly mentioned.",
+          },
+          amount: {
+            type: "number",
+            minimum: 0,
+            description:
+              "Total amount for this item (quantity × unit price if applicable).",
+          },
         },
         required: ["description", "quantity", "amount"],
       },
@@ -55,119 +67,72 @@ export const receiptsSchema = {
     subtotal: {
       type: "number",
       minimum: 0,
-      description:"Subtotal of the receipt"
+      description:
+        "Subtotal before tax and tip. ONLY include if explicitly present.",
     },
 
     tax: {
       type: "number",
       minimum: 0,
-      description:"Tax of the receipt"
-
+      description:
+        "Tax amount. ONLY include if explicitly stated on the receipt.",
     },
 
     tip: {
       type: "number",
       minimum: 0,
-      description: "Tip of the receipt. If there is no tip, just put 0.",
+      description:
+        "Tip or service charge. ONLY include if explicitly stated.",
     },
 
-    total: {
+    number: {
+      type: "string",
+      description:
+        "Receipt or invoice number. ONLY include if explicitly present.",
+    },
+
+    time: {
+      type: "string",
+      format: "time",
+      description:
+        "Receipt time (HH:MM:SS). ONLY include if explicitly present.",
+    },
+
+    currency: {
+      type: "string",
+      minLength: 3,
+      maxLength: 3,
+      description:
+        "ISO 4217 currency code (e.g., USD, INR, EUR). Include ONLY if present or clearly inferable.",
+    },
+
+    payment_method: {
+      type: "string",
+      enum: ["cash", "card", "upi", "wallet", "bank_transfer", "other"],
+      description:
+        'Payment method used. Use "other" if unclear.',
+    },
+
+    extraction_confidence: {
       type: "number",
       minimum: 0,
-      description: "Total amount of the receipt.",
+      maximum: 1,
+      description:
+        "Confidence score (0–1) representing how reliable the extraction is.",
+    },
+
+    extraction_notes: {
+      type: "string",
+      description:
+        "Notes about ambiguities, missing fields, or low-quality OCR areas.",
     },
   },
 
   required: [
-    "number",
-    "category",
-    "date",
-    "time",
     "from",
+    "date",
+    "category",
     "items",
-    "subtotal",
-    "tax",
     "total",
   ],
 };
-
-
-// export const receiptsSchema = {
-//   $schema: "https://json-schema.org/draft-07/schema#",
-//   title: "Receipt",
-//   type: "object",
-//   additionalProperties: false,
-
-//   properties: {
-//     number: {
-//       type: "string",
-//       description: "Receipt number if present.",
-//     },
-
-//     category: {
-//       type: "string",
-//       description:
-//         "Category of the receipt such as retail, groceries, restaurant, cafe, or other.",
-//     },
-
-//     date: {
-//       type: "string",
-//       description: "Date of the receipt as shown on the document.",
-//     },
-
-//     time: {
-//       type: "string",
-//       description: "Time of the receipt if available.",
-//     },
-
-//     from: {
-//       type: "string",
-//       description: "Merchant or issuer of the receipt.",
-//     },
-
-//     items: {
-//       type: "array",
-//       description: "Line items listed on the receipt.",
-//       items: {
-//         type: "object",
-//         additionalProperties: false,
-//         properties: {
-//           description: {
-//             type: "string",
-//             description: "Description of the item.",
-//           },
-//           quantity: {
-//             type: "number",
-//             description: "Quantity if available.",
-//           },
-//           amount: {
-//             type: "number",
-//             description: "Total amount for the item.",
-//           },
-//         },
-//       },
-//     },
-
-//     subtotal: {
-//       type: "number",
-//       description: "Subtotal amount if present.",
-//     },
-
-//     tax: {
-//       type: "number",
-//       description: "Tax amount if present.",
-//     },
-
-//     tip: {
-//       type: "number",
-//       description: "Tip or gratuity if present.",
-//     },
-
-//     total: {
-//       type: "number",
-//       description: "Final total amount paid.",
-//     },
-//   },
-
-//   required: ["from", "total"],
-// };
