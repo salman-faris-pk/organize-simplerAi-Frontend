@@ -72,14 +72,16 @@ export async function PUT(req: Request) {
       }
     });
 
-    return NextResponse.json(
-      { message: "Receipt updated successfully" },
-      { status: 200 },
-    );
+    
   } catch {
     return NextResponse.json(
       { error: "Failed to update receipt" },
       { status: 400 },
     );
-  }
+  };
+
+  return NextResponse.json(
+      { message: "Receipt updated successfully" },
+      { status: 200 },
+    );
 }

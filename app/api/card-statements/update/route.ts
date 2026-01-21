@@ -79,14 +79,15 @@ export async function PUT(req: Request) {
       }
     });
 
-    return NextResponse.json(
-      { message: "Card statement updated successfully" },
-      { status: 200 },
-    );
   } catch {
     return NextResponse.json(
       { error: "Failed to update card statement" },
       { status: 400 },
     );
-  }
+  };
+
+  return NextResponse.json(
+      { message: "Card statement updated successfully" },
+      { status: 200 },
+    );
 }
