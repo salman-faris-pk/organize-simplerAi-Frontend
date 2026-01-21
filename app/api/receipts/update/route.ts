@@ -1,44 +1,37 @@
 import { NextResponse } from "next/server";
 import { getUser } from "../../lib/user";
 import { prisma } from "@/lib/db";
-import { ReceiptRequestSchema } from "@/lib/validations/bodyschemas";
+import { ReceiptRequestSchema } from "@/lib/validations";
 import { z } from "zod";
 
 export async function PUT(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let data;
+  const parsed = ReceiptRequestSchema.safeParse(await req.json());
 
-  try {
-    data = ReceiptRequestSchema.parse(await req.json());
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Validation failed", issues: z.treeifyError(err) },
-        { status: 400 },
-      );
-    }
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid request body" },
+      {
+        error: "Validation failed",
+        issues: z.treeifyError(parsed.error),
+      },
       { status: 400 },
     );
   }
 
-  if (!data?.id) {
-    return NextResponse.json({ error: "Missing receipt id" }, { status: 400 });
-  }
+  const data = parsed.data;
 
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.receipt.update({   //Update the main receipt
+      await tx.receipt.update({ //Update the main receipt
         where: {
           id_userId: {
             id: data.id,
-            userId: session.id,
+            userId: user.id,
           },
         },
         data: {
@@ -71,17 +64,15 @@ export async function PUT(req: Request) {
         });
       }
     });
-
-    
   } catch {
     return NextResponse.json(
       { error: "Failed to update receipt" },
       { status: 400 },
     );
-  };
+  }
 
   return NextResponse.json(
-      { message: "Receipt updated successfully" },
-      { status: 200 },
-    );
+    { message: "Receipt updated successfully" },
+    { status: 200 },
+  );
 }

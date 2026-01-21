@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, RegisterFormData } from "@/lib/validations/auth";
+import { registerSchema, RegisterFormData } from "@/lib/validations";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";

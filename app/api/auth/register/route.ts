@@ -25,10 +25,14 @@ export async function POST(req: Request) {
         username,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+      }
     });
 
-    const { password: _pwd, ...safeUser } = user;
-    return NextResponse.json(safeUser);
+    return NextResponse.json(user);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

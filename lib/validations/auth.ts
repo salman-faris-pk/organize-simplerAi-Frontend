@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 
 export const authSchema = z.object({
    username: z
@@ -46,4 +46,5 @@ export const registerSchema = z.object({
       "Password must contain at least 1 uppercase letter and 1 number"
     ),
 });
+
 export type RegisterFormData = z.infer<typeof registerSchema>;

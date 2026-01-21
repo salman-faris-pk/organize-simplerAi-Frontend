@@ -3,9 +3,9 @@ import { getUser } from "../lib/user";
 import { prisma } from "@/lib/db";
 
 export async function GET(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   }
 
   const invoice = await prisma.invoice.findFirst({
-    where: { id: receiptId, userId: session.id },
+    where: { id: receiptId, userId: user.id },
     include: { items: true },
   });
 

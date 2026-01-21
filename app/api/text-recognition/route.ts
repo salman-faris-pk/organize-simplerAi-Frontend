@@ -4,13 +4,13 @@ import { prisma } from "@/lib/db";
 import { Status } from "@/lib/generated/prisma/client";
 
 export async function PUT(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userUUId = session?.id;
+  const userUUId = user?.id;
   const { uuid, text } = await req.json();
 
   if (!uuid || !text) {

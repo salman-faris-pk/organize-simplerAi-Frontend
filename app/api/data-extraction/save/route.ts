@@ -4,13 +4,11 @@ import { prisma } from "@/lib/db";
 import { Status } from "@/lib/generated/prisma/client";
 
 export async function PUT(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const userUUID = session?.id;
 
   const { uuid, json, category } = await req.json();
 
@@ -38,7 +36,7 @@ export async function PUT(req: Request) {
   const updatedExtraction = await prisma.extraction.updateMany({
     where: {
       id: uuid,
-      userId: userUUID,
+      userId: user.id,
       status: Status.TO_EXTRACT,
     },
     data: {

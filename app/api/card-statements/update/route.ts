@@ -1,73 +1,67 @@
 import { NextResponse } from "next/server";
 import { getUser } from "../../lib/user";
-import { CardStatementRequestSchema } from "@/lib/validations/bodyschemas";
+import { CardStatementRequestSchema } from "@/lib/validations";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 
-export async function PUT(req: Request) {
-  const session = await getUser();
 
-  if (!session) {
+export async function PUT(req: Request) {
+  const user = await getUser();
+
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body;
-
-  try {
-    body = CardStatementRequestSchema.parse(await req.json());
-  } catch (err) {
-    if (err instanceof z.ZodError) {
+  const parsed = CardStatementRequestSchema.safeParse(await req.json());
+  
+    if(!parsed.success){
       return NextResponse.json(
-        { error: "Validation failed", issues: z.treeifyError(err) },
-        { status: 400 },
+        {
+          error: "Validation failed",
+          issues: z.treeifyError(parsed.error),
+        },
+        { status: 400 }
       );
-    }
-    return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 },
-    );
-  }
-
-  if (!body.id) {
-    return NextResponse.json({ error: "Missing receipt id" }, { status: 400 });
-  }
+    };
+  
+     const data = parsed.data;
 
   try {
     await prisma.$transaction(async (tx) => {
       await tx.cardStatement.update({
         where: {
           id_userId: {
-            id: body.id,
-            userId: session.id,
+            id: data.id,
+            userId: user.id,
           },
         },
         data: {
-          creditCardName: body.creditCardName ?? null,
-          creditCardHolder: body.creditCardHolder ?? null,
-          creditCardNumber: body.creditCardNumber,
-          issuerName: body.issuerName,
-          issuerAddress: body.issuerAddress ?? null,
-          recipientName: body.recipientName ?? null,
-          recipientAddress: body.recipientAddress ?? null,
-          date: new Date(body.date),
-          currency: body.currency ?? null,
+          creditCardName: data.creditCardName ?? null,
+          creditCardHolder: data.creditCardHolder ?? null,
+          creditCardNumber: data.creditCardNumber,
+          issuerName: data.issuerName,
+          issuerAddress: data.issuerAddress ?? null,
+          recipientName: data.recipientName ?? null,
+          recipientAddress: data.recipientAddress ?? null,
+          date: new Date(data.date),
+          currency: data.currency ?? null,
           totalAmountDue:
-            body.totalAmountDue !== null && body.totalAmountDue !== undefined
-              ? Number(body.totalAmountDue)
+           data.totalAmountDue !== null && data.totalAmountDue !== undefined
+              ? Number(data.totalAmountDue)
               : null,
         },
       });
 
       await tx.cardTransaction.deleteMany({
         where: {
-          cardStatementId: body.id,
+          cardStatementId: data.id,
         },
       });
 
-      if (body.transactions?.length) {
+      if  (data.transactions?.length) {
         await tx.cardTransaction.createMany({
-          data: body.transactions.map((item) => ({
-            cardStatementId: body.id,
+          data: data.transactions.map((item) => ({
+            cardStatementId: data.id,
             description: item.description ?? null,
             category: item.category,
             amount:

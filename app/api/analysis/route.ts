@@ -4,12 +4,12 @@ import {
   cardStatementsSchema,
   invoicesSchema,
   receiptsSchema,
-} from "@/lib/llmSchemas";
+} from "@/lib/llm";
 
 export async function POST(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

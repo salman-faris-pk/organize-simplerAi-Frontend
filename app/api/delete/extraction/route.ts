@@ -5,15 +5,14 @@ import { s3 } from "../../lib/s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export async function DELETE(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
   const extractionId = searchParams.get("uuid");
-  const userUUID = session?.id;
 
   if (!extractionId) {
     return NextResponse.json(
@@ -25,7 +24,7 @@ export async function DELETE(req: Request) {
   const extraction = await prisma.extraction.findFirst({
     where: {
       id: extractionId,
-      userId: userUUID,
+      userId: user.id,
     },
   });
 

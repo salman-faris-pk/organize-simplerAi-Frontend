@@ -9,15 +9,15 @@ import { s3 } from "../lib/s3";
 
 export async function GET(req: Request) {
 
-    const session=await getUser();
+    const user=await getUser();
 
-    if (!session) {
+    if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     };
 
     const { searchParams } = new URL(req.url);
     const extractionId = searchParams.get("uuid");
-    const userUUID = session?.id;
+    const userUUID = user?.id;
 
     if (!extractionId) {
     return NextResponse.json(

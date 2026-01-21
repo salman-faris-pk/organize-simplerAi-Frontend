@@ -6,9 +6,9 @@ import { prisma } from "@/lib/db";
 import { getUser } from "@/app/api/lib/user";
 
 export async function POST(req: Request) {
-  const session = await getUser();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const userUUID = session?.id;
+    const userUUID = user?.id;
     const fileUUID = randomUUID();
     const key = `${userUUID}/${fileUUID}`;
 

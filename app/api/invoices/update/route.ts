@@ -2,41 +2,28 @@ import { NextResponse } from "next/server";
 import { getUser } from "../../lib/user";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { InvoiceRequestSchema } from "@/lib/validations/bodyschemas"
+import { InvoiceRequestSchema } from "@/lib/validations"
 
 export async function PUT(req:Request) {
-    const session= await getUser();
+    const user= await getUser();
 
-    if (!session) {
+    if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   };
 
-  let jsonData;
-
-  try {
-
-    jsonData = InvoiceRequestSchema.parse(await req.json());
+  const parsed = InvoiceRequestSchema.safeParse(await req.json());
     
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        {
-          error: "Validation failed",
-          issues: z.treeifyError(error),
-        },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: "Invalid request jsonData" },
-      { status: 400 }
-    );
-  };
-
-  if (!jsonData?.id) {
-    return NextResponse.json({ error: "Missing receipt id" }, { status: 400 });
-  };
+      if(!parsed.success){
+        return NextResponse.json(
+          {
+            error: "Validation failed",
+            issues: z.treeifyError(parsed.error),
+          },
+          { status: 400 }
+        );
+      };
+    
+       const jsonData = parsed.data;
 
 
   try {
@@ -45,7 +32,7 @@ export async function PUT(req:Request) {
            where: {
             id_userId: {
               id: jsonData.id,
-              userId: session.id
+              userId: user.id
             }
            },
            data: {
