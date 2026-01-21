@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getUser } from "../../lib/user";
 import { prisma } from "@/lib/db";
-import { UpdateReceiptPayload } from "@/lib/types";
-
+import { ReceiptRequestSchema } from "@/lib/validations/bodyschemas";
+import { z } from "zod";
 
 export async function PUT(req: Request) {
   const session = await getUser();
@@ -11,81 +11,75 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let jsonObj: UpdateReceiptPayload;
+  let data;
 
   try {
-    jsonObj = (await req.json()) as UpdateReceiptPayload;
-
-  } catch {
+    data = ReceiptRequestSchema.parse(await req.json());
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: z.treeifyError(err) },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
-      { error: "Invalid JSON body" },
-      { status: 400 }
+      { error: "Invalid request body" },
+      { status: 400 },
     );
-  };
+  }
 
-  if (!jsonObj?.id) {
-    return NextResponse.json(
-      { error: "Missing receipt id" },
-      { status: 400 }
-    );
-  };
+  if (!data?.id) {
+    return NextResponse.json({ error: "Missing receipt id" }, { status: 400 });
+  }
 
   try {
-    await prisma.$transaction([
-      prisma.receipt.updateMany({   //Update the main receipt
+    await prisma.$transaction(async (tx) => {
+      await tx.receipt.update({   //Update the main receipt
         where: {
-          id: jsonObj.id,
-          userId: session.id,
+          id_userId: {
+            id: data.id,
+            userId: session.id,
+          },
         },
         data: {
-          number: jsonObj.number ?? null,
-          category: jsonObj.category,
-          date: new Date(jsonObj.date),
-          time: jsonObj.time ?? null,
-          from: jsonObj.from,
-          subtotal:
-            jsonObj.subtotal !== null && jsonObj.subtotal !== undefined
-              ? Number(jsonObj.subtotal)
-              : null,
-          tax:
-            jsonObj.tax !== null && jsonObj.tax !== undefined
-              ? Number(jsonObj.tax)
-              : null,
-          tip:
-            jsonObj.tip !== null && jsonObj.tip !== undefined
-              ? Number(jsonObj.tip)
-              : null,
-          total: Number(jsonObj.total),
+          number: data.number ?? null,
+          category: data.category,
+          date: new Date(data.date),
+          time: data.time ?? null,
+          from: data.from,
+          subtotal: data.subtotal != null ? Number(data.subtotal) : null,
+          tax: data.tax != null ? Number(data.tax) : null,
+          tip: data.tip != null ? Number(data.tip) : null,
+          total: Number(data.total),
         },
-      }),
+      });
 
-      prisma.receiptItem.deleteMany({   //Delete all existing receipt items for this receipt
+      await tx.receiptItem.deleteMany({  //Delete all existing receipt items for this receipt
         where: {
-          receiptId: jsonObj.id,
+          receiptId: data.id,
         },
-      }),
+      });
 
-      prisma.receiptItem.createMany({   //Insert the new set of receipt items
-        data:
-          jsonObj.items?.map((item) => ({
-            receiptId: jsonObj.id,
+      if (data.items?.length) {
+        await tx.receiptItem.createMany({  //Insert the new set of receipt items
+          data: data.items.map((item) => ({
+            receiptId: data.id,
             description: item.description,
             quantity: Number(item.quantity),
             amount: Number(item.amount),
-          })) ?? [],
-      }),
-    ]);
-  } catch (err) {
-    console.error(err);
+          })),
+        });
+      }
+    });
+
+    return NextResponse.json(
+      { message: "Receipt updated successfully" },
+      { status: 200 },
+    );
+  } catch {
     return NextResponse.json(
       { error: "Failed to update receipt" },
-      { status: 400 }
+      { status: 400 },
     );
-  };
-
-   return NextResponse.json(
-    { message: "Receipt updated successfully" },
-    { status: 200 }
-  );
-
+  }
 }

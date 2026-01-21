@@ -43,8 +43,6 @@ export async function POST(req: Request) {
       );
   }
 
- 
-
   const { output } = await fetchJsonExtract({text, schema});
 
   return NextResponse.json(output, { status: 201 });

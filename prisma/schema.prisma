@@ -68,6 +68,8 @@ model Receipt {
 
    user User @relation(fields: [userId],references: [id],onDelete: Cascade)
    extraction Extraction @relation(fields: [extractionId],references: [id],onDelete: Cascade)
+
+   @@unique([id, userId])
 }
 
 model ReceiptItem{
@@ -100,6 +102,8 @@ model Invoice {
 
   user User @relation(fields: [userId],references: [id],onDelete: Cascade)
   extraction Extraction @relation(fields: [extractionId],references: [id],onDelete: Cascade)
+
+  @@unique([id, userId])
 }
 
 model InvoiceItem {
@@ -133,6 +137,8 @@ model CardStatement {
 
   user User @relation(fields: [userId],references: [id],onDelete: Cascade)
   extraction Extraction @relation(fields: [extractionId],references: [id],onDelete: Cascade)
+
+  @@unique([id, userId])
 }
 
 
