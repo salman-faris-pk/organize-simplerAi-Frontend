@@ -11,15 +11,15 @@ export const ReceiptRequestSchema = z.object({
   ),
   time: z.string().nullable().optional(),
   from: z.string().min(1),
-  subtotal: z.union([z.number(), z.string()]).nullable().optional(),
-  tax: z.union([z.number(), z.string()]).nullable().optional(),
-  tip: z.union([z.number(), z.string()]).nullable().optional(),
-  total: z.union([z.number(), z.string()]),
+  subtotal: z.coerce.number().nullable().optional(),
+  tax: z.coerce.number().nullable().optional(),
+  tip: z.coerce.number().nullable().optional(),
+  total: z.coerce.number(),
   items: z.array(
     z.object({
       description: z.string().min(1),
-      quantity: z.union([z.number(), z.string()]),
-      amount: z.union([z.number(), z.string()]),
+      quantity: z.coerce.number(),
+      amount: z.coerce.number(),
     })
   ).optional(),
 });

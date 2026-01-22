@@ -40,10 +40,10 @@ export async function PUT(req: Request) {
           date: new Date(data.date),
           time: data.time ?? null,
           from: data.from,
-          subtotal: data.subtotal != null ? Number(data.subtotal) : null,
-          tax: data.tax != null ? Number(data.tax) : null,
-          tip: data.tip != null ? Number(data.tip) : null,
-          total: Number(data.total),
+          subtotal: data.subtotal != null ? data.subtotal : null,
+          tax: data.tax != null ? data.tax : null,
+          tip: data.tip != null ? data.tip : null,
+          total: data.total,
         },
       });
 
@@ -58,8 +58,8 @@ export async function PUT(req: Request) {
           data: data.items.map((item) => ({
             receiptId: data.id,
             description: item.description,
-            quantity: Number(item.quantity),
-            amount: Number(item.amount),
+            quantity: item.quantity,
+            amount: item.amount,
           })),
         });
       }

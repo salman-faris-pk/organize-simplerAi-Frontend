@@ -3,7 +3,7 @@ import { z } from "zod";
 const CardTransactionSchema = z.object({
   description: z.string().nullable().optional(),
   category: z.string().min(1),
-  amount: z.union([z.number(), z.string()]).nullable().optional(),
+  amount: z.coerce.number().nullable().optional(),
 });
 
 export const CardStatementRequestSchema = z.object({
@@ -17,7 +17,7 @@ export const CardStatementRequestSchema = z.object({
   recipientAddress: z.string().nullable().optional(),
   date: z.string().refine((v) => !isNaN(Date.parse(v)), "Invalid date"),
   currency: z.string().nullable().optional(),
-  totalAmountDue: z.union([z.number(), z.string()]).nullable().optional(),
+  totalAmountDue: z.coerce.number().nullable().optional(),
   transactions: z.array(CardTransactionSchema).optional(),
 });
 

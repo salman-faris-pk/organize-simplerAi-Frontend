@@ -45,7 +45,7 @@ export async function PUT(req:Request) {
             toAddress: jsonData.toAddress ?? null,
             currency: jsonData.currency ?? null,
             totalAmountDue: jsonData.totalAmountDue !== null && jsonData.totalAmountDue !== undefined
-                ? Number(jsonData.totalAmountDue)
+                ? jsonData.totalAmountDue
                 : null,
            }
          });
@@ -63,7 +63,7 @@ export async function PUT(req:Request) {
             description: item.description ?? null,
             amount:
               item.amount !== null && item.amount !== undefined
-                ? Number(item.amount)
+                ? item.amount
                 : null,
           })),
         });

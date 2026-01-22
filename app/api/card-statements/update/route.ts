@@ -47,7 +47,7 @@ export async function PUT(req: Request) {
           currency: data.currency ?? null,
           totalAmountDue:
            data.totalAmountDue !== null && data.totalAmountDue !== undefined
-              ? Number(data.totalAmountDue)
+              ? data.totalAmountDue
               : null,
         },
       });
@@ -66,7 +66,7 @@ export async function PUT(req: Request) {
             category: item.category,
             amount:
               item.amount !== null && item.amount !== undefined
-                ? Number(item.amount)
+                ? item.amount
                 : null,
           })),
         });

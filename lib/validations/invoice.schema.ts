@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const InvoiceItemSchema = z.object({
   description: z.string().nullable().optional(),
-  amount: z.union([z.number(), z.string()]).nullable().optional(),
+  amount: z.coerce.number().nullable().optional(),
 });
 
 
@@ -21,7 +21,7 @@ export const InvoiceRequestSchema = z.object({
   toName: z.string().nullable().optional(),
   toAddress: z.string().nullable().optional(),
   currency: z.string().nullable().optional(),
-  totalAmountDue: z.union([z.number(), z.string()]).nullable().optional(),
+  totalAmountDue: z.coerce.number().nullable().optional(),
   items: z.array(InvoiceItemSchema).optional(),
 });
 
