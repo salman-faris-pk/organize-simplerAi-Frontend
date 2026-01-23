@@ -15,7 +15,7 @@ export const CardStatementRequestSchema = z.object({
   issuerAddress: z.string().nullable().optional(),
   recipientName: z.string().nullable().optional(),
   recipientAddress: z.string().nullable().optional(),
-  date: z.string().refine((v) => !isNaN(Date.parse(v)), "Invalid date"),
+  date: z.string(),
   currency: z.string().nullable().optional(),
   totalAmountDue: z.coerce.number().nullable().optional(),
   transactions: z.array(CardTransactionSchema).optional(),

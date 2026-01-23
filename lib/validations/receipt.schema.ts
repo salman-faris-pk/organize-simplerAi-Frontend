@@ -5,10 +5,7 @@ export const ReceiptRequestSchema = z.object({
   id: z.uuid(),
   number: z.string().nullable().optional(),
   category: z.string().min(1),
-  date: z.string().refine(
-    (v) => !isNaN(Date.parse(v)),
-    "Invalid date"
-  ),
+  date: z.string(),
   time: z.string().nullable().optional(),
   from: z.string().min(1),
   subtotal: z.coerce.number().nullable().optional(),

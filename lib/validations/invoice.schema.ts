@@ -11,11 +11,7 @@ export const InvoiceRequestSchema = z.object({
   id: z.uuid(),
   invoiceNumber: z.string().nullable().optional(),
   category: z.string().min(1),
-
-  date: z.string().refine(
-    (v) => !isNaN(Date.parse(v)),
-    "Invalid date"
-  ),
+  date: z.string(),
   fromName: z.string().nullable().optional(),
   fromAddress: z.string().nullable().optional(),
   toName: z.string().nullable().optional(),

@@ -45,10 +45,7 @@ export async function PUT(req: Request) {
           recipientAddress: data.recipientAddress ?? null,
           date: new Date(data.date),
           currency: data.currency ?? null,
-          totalAmountDue:
-           data.totalAmountDue !== null && data.totalAmountDue !== undefined
-              ? data.totalAmountDue
-              : null,
+          totalAmountDue: data.totalAmountDue ?? null,
         },
       });
 
@@ -64,10 +61,7 @@ export async function PUT(req: Request) {
             cardStatementId: data.id,
             description: item.description ?? null,
             category: item.category,
-            amount:
-              item.amount !== null && item.amount !== undefined
-                ? item.amount
-                : null,
+            amount: item.amount ?? null,
           })),
         });
       }

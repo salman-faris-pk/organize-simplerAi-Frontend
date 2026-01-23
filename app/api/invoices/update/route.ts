@@ -44,9 +44,7 @@ export async function PUT(req:Request) {
             toName: jsonData.toName ?? null,
             toAddress: jsonData.toAddress ?? null,
             currency: jsonData.currency ?? null,
-            totalAmountDue: jsonData.totalAmountDue !== null && jsonData.totalAmountDue !== undefined
-                ? jsonData.totalAmountDue
-                : null,
+            totalAmountDue: jsonData.totalAmountDue ?? null,
            }
          });
 
@@ -61,10 +59,7 @@ export async function PUT(req:Request) {
           data: jsonData.items.map((item) => ({
             invoiceId: jsonData.id,
             description: item.description ?? null,
-            amount:
-              item.amount !== null && item.amount !== undefined
-                ? item.amount
-                : null,
+            amount: item.amount ?? null,
           })),
         });
       }

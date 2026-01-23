@@ -1,3 +1,3 @@
-export * from "./llmreceiptsSchema";
-export * from "./llminvoicesSchema";
-export * from "./llmcardStatementsSchema";
+export * from "./llmreceipts";
+export * from "./llminvoices";
+export * from "./llmcardStatement";
