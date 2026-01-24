@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     {
       method: "POST",
       headers: {
-        "X-API-Key": process.env.X_API_KEY!,
+        "X-API-KEY": process.env.X_API_KEY!,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

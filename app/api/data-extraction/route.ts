@@ -5,7 +5,7 @@ import {
   invoicesSchema,
   receiptsSchema,
 } from "@/lib/llm";
-import { fetchJsonExtract } from "@/lib/utils";
+import { fetchJsonExtract } from "@/app/api/lib/helper";
 
 
 export async function POST(req: Request) {

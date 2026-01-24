@@ -151,6 +151,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: "Process finished" }, { status: 200 });
+    
   } catch (err: unknown) {
     if (err instanceof Error) {
       if (err.message === "EXTRACTION_NOT_FOUND") {
